@@ -46,7 +46,7 @@ public class Loan {
 
 	// 创建定期贷款
 	public static Loan newTermLoan(double commitment, Date start, Date maturity, int riskRating) {
-		return new Loan(commitment, commitment, start, null, maturity, riskRating, new CapitalStrategy());
+		return new Loan(commitment, commitment, start, null, maturity, riskRating, new CapitalStrategyTermLoan());
 	}
 
 	// 创建信用额度贷款

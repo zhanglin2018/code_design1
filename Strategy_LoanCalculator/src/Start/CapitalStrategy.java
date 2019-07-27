@@ -32,17 +32,7 @@ public class CapitalStrategy {
 		}
 		return 0.0;
 	}
-
-	// 获取风险因素
-	private double riskFactor(Loan loan) {
-		return RiskFactor.getFactors().forRating(loan.getRiskRating());
-	}
-
-	// 获取未使用风险因素
-	private double unusedRiskFactor(Loan loan) {
-		return UnusedRiskFactors.getFactors().forRating(loan.getRiskRating());
-	}
-
+	
 	// 贷款周期计算
 	public double duration(Loan loan) {
 		if (loan.getExpiry() == null && loan.getMaturity() != null) // 定期贷款
@@ -51,6 +41,17 @@ public class CapitalStrategy {
 			return loan.yearsTo(loan.getExpiry());
 		return 0.0;
 	}
+
+	// 获取风险因素
+	protected double riskFactor(Loan loan) {
+		return RiskFactor.getFactors().forRating(loan.getRiskRating());
+	}
+
+	// 获取未使用风险因素
+	private double unusedRiskFactor(Loan loan) {
+		return UnusedRiskFactors.getFactors().forRating(loan.getRiskRating());
+	}
+
 	
 	
 }
