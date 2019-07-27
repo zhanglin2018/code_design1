@@ -5,6 +5,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+/*
+ * private constructor:
+ *    1: singleton case
+ *    2: multiple field needed to implemented in the constructor.
+ *    3: provide multiple static function to users.
+ */
+
 public class Loan {
 	private static final long MILLIS_PER_DAY = 86400000;
 	private static final long DAYS_PER_YEAR = 365;
