@@ -48,7 +48,7 @@ public class CapitalStrategy {
 	}
 
 	// 获取未使用风险因素
-	private double unusedRiskFactor(Loan loan) {
+	protected double unusedRiskFactor(Loan loan) {
 		return UnusedRiskFactors.getFactors().forRating(loan.getRiskRating());
 	}
 
