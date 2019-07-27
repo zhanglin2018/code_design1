@@ -9,17 +9,18 @@ public class Loan {
 	private static final long MILLIS_PER_DAY = 86400000;
 	private static final long DAYS_PER_YEAR = 365;
 
-	private Date expiry; 				// 有效日
-	private Date maturity; 				// 到期日
-	private Date start; 				// 起始日
-	private Date today; 				// 当日
+	private Date expiry; // 有效日
+	private Date maturity; // 到期日
+	private Date start; // 起始日
+	private Date today; // 当日
 
-	private double commitment; 			// 承诺金额
-	private double outstanding; 		// 未清金额
-	private double unusedPercentage; 	// 未用份额
-	private int riskRating; 			// 风险评级
+	private double commitment; // 承诺金额
+	private double outstanding; // 未清金额
+	private double unusedPercentage; // 未用份额
+	private int riskRating; // 风险评级
 
-	private List<Payment> payments; 	// 支付记录
+	private List<Payment> payments; // 支付记录
+	private CapitalStrategy capitalStrategy;
 
 	//////////////////// 对象构造相关 ////////////////////
 	// 构造函数
@@ -30,9 +31,10 @@ public class Loan {
 		this.setExpiry(expiry);
 		this.setMaturity(maturity);
 		this.setRiskRating(riskRating);
-		
+
 		this.unusedPercentage = 1.0;
 		this.payments = new LinkedList<Payment>();
+		capitalStrategy = new CapitalStrategy(); // 这个如何改变呢? 在外界变化的时候，可以发生改变。
 	}
 
 	// 创建定期贷款
@@ -55,16 +57,16 @@ public class Loan {
 	public static Loan newRevolver(double commitment, Date start, Date expiry, int riskRating) {
 		return new Loan(commitment, 0, start, expiry, null, riskRating);
 	}
-	
+
 	//////////////////// 贷款金额周期计算 ////////////////////
 	// 贷款金额计算
 	public double capital() {
-		return new CapitalStrategy().capital(this);
+		return capitalStrategy.capital(this);
 	}
 
 	// 贷款周期计算
 	public double duration() {
-		return new CapitalStrategy().duration(this);
+		return capitalStrategy.duration(this);
 	}
 
 	//////////////////// 贷款金额周期计算辅助方法 ////////////////////
@@ -102,7 +104,7 @@ public class Loan {
 
 		if (getCommitment() != 0.0)
 			duration = weightedAverage / sumOfPayments;
-		
+
 		return duration;
 	}
 
@@ -122,7 +124,7 @@ public class Loan {
 		return UnusedRiskFactors.getFactors().forRating(getRiskRating());
 	}
 
-	////////////////////贷款支付方法 ////////////////////
+	//////////////////// 贷款支付方法 ////////////////////
 	// 支付
 	public void payment(double amount, Date date) {
 		payments.add(new Payment(amount, date));
