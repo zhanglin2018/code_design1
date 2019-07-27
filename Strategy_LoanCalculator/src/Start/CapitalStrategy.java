@@ -1,5 +1,7 @@
 package Start;
 
+import java.util.Date;
+
 /*
  * 1.封装属性
  * 2.属性不建议直接改可见级别，但是函数可以直接 改变可见级别。
@@ -40,4 +42,15 @@ public class CapitalStrategy {
 	private double unusedRiskFactor(Loan loan) {
 		return UnusedRiskFactors.getFactors().forRating(loan.getRiskRating());
 	}
+
+	// 贷款周期计算
+	public double duration(Loan loan) {
+		if (loan.getExpiry() == null && loan.getMaturity() != null) // 定期贷款
+			return loan.weightedAverageDuration();
+		else if (loan.getExpiry() != null && loan.getMaturity() == null) // 循环或建议信用额度贷款
+			return loan.yearsTo(loan.getExpiry());
+		return 0.0;
+	}
+	
+	
 }

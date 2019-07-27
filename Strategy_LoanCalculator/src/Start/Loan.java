@@ -64,11 +64,7 @@ public class Loan {
 
 	// 贷款周期计算
 	public double duration() {
-		if (getExpiry() == null && getMaturity() != null) 		// 定期贷款
-			return weightedAverageDuration();
-		else if (getExpiry() != null && getMaturity() == null) 	// 循环或建议信用额度贷款
-			return yearsTo(getExpiry());
-		return 0.0;
+		return new CapitalStrategy().duration(this);
 	}
 
 	//////////////////// 贷款金额周期计算辅助方法 ////////////////////
@@ -92,7 +88,7 @@ public class Loan {
 	}
 
 	// 加权平均周期
-	private double weightedAverageDuration() {
+	double weightedAverageDuration() {
 		double duration = 0.0;
 		double weightedAverage = 0.0;
 		double sumOfPayments = 0.0;
@@ -111,7 +107,7 @@ public class Loan {
 	}
 
 	// 年数差
-	private double yearsTo(Date endDate) {
+	public double yearsTo(Date endDate) {
 		Date beginDate = (today == null ? start : today);
 		return ((endDate.getTime() - beginDate.getTime()) / MILLIS_PER_DAY) / DAYS_PER_YEAR;
 	}
