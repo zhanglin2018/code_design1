@@ -24,12 +24,12 @@ public class Loan {
 	//////////////////// 对象构造相关 ////////////////////
 	// 构造函数
 	private Loan(double commitment, double outstanding, Date start, Date expiry, Date maturity, int riskRating) {
-		this.commitment = commitment;
+		this.setCommitment(commitment);
 		this.outstanding = outstanding;
 		this.start = start;
-		this.expiry = expiry;
-		this.maturity = maturity;
-		this.riskRating = riskRating;
+		this.setExpiry(expiry);
+		this.setMaturity(maturity);
+		this.setRiskRating(riskRating);
 		
 		this.unusedPercentage = 1.0;
 		this.payments = new LinkedList<Payment>();
@@ -59,39 +59,21 @@ public class Loan {
 	//////////////////// 贷款金额周期计算 ////////////////////
 	// 贷款金额计算
 	public double capital() {
-		// 有效日为空，到期日不为空，为定期贷款
-		// 资金计算方法：承诺金额 * 期限 * 风险因素
-		if (expiry == null && maturity != null)
-			return commitment * duration() * riskFactor();
-
-		// 有效日不为空，到期日为空，为循环贷款或建议信用额度贷款
-		// 若未用份额不为 100%，为信用额度贷款，否则为循环贷款
-		if (expiry != null && maturity == null) {
-			if (getUnusedPercentage() != 1.0)
-				// 信用额度贷款
-				// 资金计算方法：承诺金额 * 未用份额 * 期限 * 风险因素
-				return commitment * getUnusedPercentage() * duration() * riskFactor();
-			else
-				// 循环贷款
-				// 资金计算方法：未清风险
-				return (outstandingRiskAmount() * duration() * riskFactor())
-						+ (unusedRiskAmount() * duration() * unusedRiskFactor());
-		}
-		return 0.0;
+		return new CapitalStrategy().capital(this);
 	}
 
 	// 贷款周期计算
 	public double duration() {
-		if (expiry == null && maturity != null) 		// 定期贷款
+		if (getExpiry() == null && getMaturity() != null) 		// 定期贷款
 			return weightedAverageDuration();
-		else if (expiry != null && maturity == null) 	// 循环或建议信用额度贷款
-			return yearsTo(expiry);
+		else if (getExpiry() != null && getMaturity() == null) 	// 循环或建议信用额度贷款
+			return yearsTo(getExpiry());
 		return 0.0;
 	}
 
 	//////////////////// 贷款金额周期计算辅助方法 ////////////////////
 	// 未用份额
-	private double getUnusedPercentage() {
+	public double getUnusedPercentage() {
 		return unusedPercentage;
 	}
 
@@ -100,13 +82,13 @@ public class Loan {
 	}
 
 	// 未清金额
-	private double outstandingRiskAmount() {
+	public double outstandingRiskAmount() {
 		return outstanding;
 	}
 
 	// 未用风险金额
-	private double unusedRiskAmount() {
-		return (commitment - outstanding);
+	double unusedRiskAmount() {
+		return (getCommitment() - outstanding);
 	}
 
 	// 加权平均周期
@@ -122,7 +104,7 @@ public class Loan {
 			weightedAverage += yearsTo(payment.date()) * payment.amount();
 		}
 
-		if (commitment != 0.0)
+		if (getCommitment() != 0.0)
 			duration = weightedAverage / sumOfPayments;
 		
 		return duration;
@@ -136,18 +118,50 @@ public class Loan {
 
 	// 获取风险因素
 	private double riskFactor() {
-		return RiskFactor.getFactors().forRating(riskRating);
+		return RiskFactor.getFactors().forRating(getRiskRating());
 	}
 
 	// 获取未使用风险因素
 	private double unusedRiskFactor() {
-		return UnusedRiskFactors.getFactors().forRating(riskRating);
+		return UnusedRiskFactors.getFactors().forRating(getRiskRating());
 	}
 
 	////////////////////贷款支付方法 ////////////////////
 	// 支付
 	public void payment(double amount, Date date) {
 		payments.add(new Payment(amount, date));
+	}
+
+	public Date getExpiry() {
+		return expiry;
+	}
+
+	public void setExpiry(Date expiry) {
+		this.expiry = expiry;
+	}
+
+	public Date getMaturity() {
+		return maturity;
+	}
+
+	public void setMaturity(Date maturity) {
+		this.maturity = maturity;
+	}
+
+	public double getCommitment() {
+		return commitment;
+	}
+
+	public void setCommitment(double commitment) {
+		this.commitment = commitment;
+	}
+
+	public int getRiskRating() {
+		return riskRating;
+	}
+
+	public void setRiskRating(int riskRating) {
+		this.riskRating = riskRating;
 	}
 
 }
