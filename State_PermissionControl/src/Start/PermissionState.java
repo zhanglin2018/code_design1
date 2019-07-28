@@ -12,12 +12,12 @@ public class PermissionState {
 		this.name = name;
 	}
 
-	public static final PermissionState REQUESTED = new PermissionState("REQUESTED");
-	public static final PermissionState CLAIMED = new PermissionState("CLAIMED");
-	public static final PermissionState GRANTED = new PermissionState("GRANTED");
-	public static final PermissionState DENIED = new PermissionState("DENIED");
-	public static final PermissionState UNIX_REQUESTED = new PermissionState("UNIX_REQUESTED");
-	public static final PermissionState UNIX_CLAMED = new PermissionState("UNIX_CLAMED");
+	public static final PermissionState REQUESTED = new PermissionRequested();
+	public static final PermissionState CLAIMED = new PermissionClaimed();
+	public static final PermissionState GRANTED = new PermissionGranted();
+	public static final PermissionState DENIED = new PermissionDenied();
+	public static final PermissionState UNIX_REQUESTED = new PermissionUnixRequested();
+	public static final PermissionState UNIX_CLAMED = new PermissionUnixClaimed();
 
 	@Override
 	public String toString() {
