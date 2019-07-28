@@ -23,15 +23,16 @@ public class PermissionState {
 	public String toString() {
 		return name;
 	}
-	
+
 	public void claimedBy(SystemAdmin admin, SystemPermission permission) {
-		if (!permission.getState().equals(PermissionState.REQUESTED) && !permission.getState().equals(PermissionState.UNIX_REQUESTED))
+		if (!permission.getState().equals(REQUESTED) && !permission.getState().equals(UNIX_REQUESTED))
 			return;
-		
+
 		permission.willBeHandledBy(admin);
-		if (permission.getState().equals(PermissionState.REQUESTED))
-			permission.setState(PermissionState.CLAIMED);
-		else if (permission.getState().equals(PermissionState.UNIX_REQUESTED))
-			permission.setState(PermissionState.UNIX_CLAMED);
+
+		if (permission.getState().equals(REQUESTED))
+			permission.setState(CLAIMED);
+		else if (permission.getState().equals(UNIX_REQUESTED))
+			permission.setState(UNIX_CLAMED);
 	}
 }
