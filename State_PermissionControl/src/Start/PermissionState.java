@@ -35,4 +35,35 @@ public class PermissionState {
 		else if (permission.getState().equals(UNIX_REQUESTED))
 			permission.setState(UNIX_CLAMED);
 	}
+	
+	public void deniedBy(SystemAdmin admin, SystemPermission permission) {
+		if (!permission.getState().equals(CLAIMED) && !permission.getState().equals(UNIX_CLAMED))
+			return;
+		
+		if (!permission.getAdmin().equals(admin))
+			return;
+		
+		permission.setGranted(false);
+		permission.setUnixPermissionGranted(false);
+		permission.setState(DENIED);
+		permission.notifyUserOfPermissionRequestResult();
+	}
+
+	public void grantedBy(SystemAdmin admin, SystemPermission permission) {
+		if (!permission.getState().equals(CLAIMED) && !permission.state().equals(UNIX_CLAMED))
+			return;
+		if (!permission.getAdmin().equals(admin))
+			return;
+
+		if (permission.getProfile().isUnixPermissionRequired() && permission.getState().equals(UNIX_CLAMED))
+			permission.setUnixPermissionGranted(true);
+		else if (permission.getProfile().isUnixPermissionRequired() && !permission.isUnixPermissionGranted()) {
+			permission.setState(UNIX_REQUESTED);
+			permission.notifyUnixAdminsOfPermissionRequest();
+			return;
+		}
+		permission.setState(GRANTED);
+		permission.setGranted(true);
+		permission.notifyUserOfPermissionRequestResult();
+	}
 }
