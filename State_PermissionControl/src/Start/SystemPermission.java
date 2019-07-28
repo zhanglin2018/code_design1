@@ -30,13 +30,7 @@ public class SystemPermission {
 	}
 
 	public void claimedBy(SystemAdmin admin) {
-		if (!state.equals(PermissionState.REQUESTED) && !state.equals(PermissionState.UNIX_REQUESTED))
-			return;
-		willBeHandledBy(admin);
-		if (state.equals(PermissionState.REQUESTED))
-			state = PermissionState.CLAIMED;
-		else if (state.equals(PermissionState.UNIX_REQUESTED))
-			state = PermissionState.UNIX_CLAMED;
+		state.claimedBy(admin, this);
 	}
 
 	public void deniedBy(SystemAdmin admin) {
@@ -72,7 +66,7 @@ public class SystemPermission {
 		System.out.println("Permission Requested.");
 	}
 
-	private void willBeHandledBy(SystemAdmin admin) {
+	void willBeHandledBy(SystemAdmin admin) {
 		this.admin = admin;
 		System.out.println("Permission Claimed.");
 	}
